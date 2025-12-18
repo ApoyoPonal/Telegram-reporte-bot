@@ -17,49 +17,41 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 GROUP_ID = int(os.getenv("GROUP_ID"))
 
 # =========================
-# BOT - COMANDOS
+# COMANDO /start
 # =========================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "👮‍♂️ *Bot de Reportes Anónimos*\n\n"
-        "Este bot permite enviar información de forma anónima.\n\n"
-        "📌 Puedes reportar:\n"
+        "👮‍♂️ Bot de Reportes Anónimos\n\n"
+        "Envía información sobre:\n"
         "- Personas sospechosas\n"
         "- Vehículos sospechosos\n"
         "- Situaciones irregulares\n\n"
-        "✍️ Envía tu reporte en *un solo mensaje*, incluyendo:\n"
-        "• Lugar\n"
-        "• Hora aproximada\n"
-        "• Descripción clara\n\n"
-        "_No se solicitan datos personales._",
-        parse_mode="Markdown"
+        "✍️ Escribe el reporte en un solo mensaje.\n\n"
+        "No se solicitan datos personales."
     )
 
 # =========================
-# BOT - MENSAJES
+# MENSAJES DE TEXTO
 # =========================
 async def recibir_reporte(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mensaje = update.message.text
 
     texto = (
-        "🚨 *REPORTE ANÓNIMO RECIBIDO*\n\n"
+        "🚨 REPORTE ANÓNIMO\n\n"
         f"{mensaje}"
     )
 
     await context.bot.send_message(
         chat_id=GROUP_ID,
-        text=texto,
-        parse_mode="Markdown"
+        text=texto
     )
 
     await update.message.reply_text(
-        "✅ *Reporte recibido.*\n"
-        "Gracias por colaborar.",
-        parse_mode="Markdown"
+        "✅ Reporte recibido. Gracias por colaborar."
     )
 
 # =========================
-# FLASK - KEEP ALIVE
+# FLASK KEEP ALIVE
 # =========================
 app = Flask(__name__)
 
@@ -75,7 +67,8 @@ def run_flask():
 # =========================
 def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
-print("🚀 BOT INICIANDO POLLING")
+    print("🚀 BOT INICIANDO POLLING")
+
     application.add_handler(CommandHandler("start", start))
     application.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, recibir_reporte)
