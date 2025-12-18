@@ -1,25 +1,26 @@
+import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filters
 
-async def reenviar_reporte(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message.chat.type == "private":
-        texto = update.message.text
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GROUP_ID = os.getenv("GROUP_ID")
 
-        mensaje = (
-            "🚨 REPORTE ANÓNIMO 🚨\n\n"
-            f"{texto}"
-        )
+async def recibir_mensaje(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    mensaje = update.message.text
+    usuario = update.message.from_user.id
 
-        await context.bot.send_message(
-            chat_id=context.bot_data["GROUP_ID"],
-            text=mensaje
-        )
+    texto = (
+        "📩 *Nuevo reporte anónimo*\n\n"
+        f"📝 Mensaje:\n{mensaje}"
+    )
 
-app = ApplicationBuilder().token(
-    "TOKEN_AQUI"
-).build()
+    await context.bot.send_message(
+        chat_id=GROUP_ID,
+        text=texto,
+        parse_mode="Markdown"
+    )
 
-app.bot_data["GROUP_ID"] = -1000000000000  # ID_AQUI
-
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, reenviar_reporte))
-app.run_polling()
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, recibir_mensaje))
+    app.run_polling()
