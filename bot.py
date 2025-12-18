@@ -75,7 +75,7 @@ def run_flask():
 # =========================
 def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
-
+print("🚀 BOT INICIANDO POLLING")
     application.add_handler(CommandHandler("start", start))
     application.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, recibir_reporte)
